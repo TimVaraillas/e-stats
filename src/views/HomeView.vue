@@ -1,17 +1,31 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to E-Stats App"/>
+    <h1>Welcome to E-Stats App</h1>
+    <ul>
+      <li v-for="game of games" :key="game.name">
+        {{ game.name }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'HomeView',
-  components: {
-    HelloWorld,
+  computed: {
+    ...mapState('games', {
+      games: 'all',
+    }),
+  },
+  mounted() {
+    this.getAllGames();
+  },
+  methods: {
+    ...mapActions('games', [
+      'getAllGames',
+    ]),
   },
 };
 </script>

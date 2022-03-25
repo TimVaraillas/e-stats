@@ -6,13 +6,13 @@
           <router-link to="/">
             <el-menu-item index="1">
             <i class="fas fa-home"></i>
-            <span v-if="!isCollapse">Accueil</span>
+            <span>Accueil</span>
             </el-menu-item>
           </router-link>
           <router-link to="/games/add">
             <el-menu-item index="2">
               <i class="fas fa-plus"></i>
-              <span v-if="!isCollapse">Nouveau match</span>
+              <span>Nouveau match</span>
             </el-menu-item>
           </router-link>
         </el-menu>
