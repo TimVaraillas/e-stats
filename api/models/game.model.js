@@ -1,12 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-let Game = new Schema({
-  name: {
-    type: String
-  },
-},{
-    collection: 'games'
+let gameModel = new Schema({
+  name: String
+}, { versionKey: false });
+
+gameModel.set('toJSON', {
+  virtuals: true,
+  transform: function (doc, ret) {   
+    delete ret._id; 
+  }
 });
 
-module.exports = mongoose.model('Game', Game);
+module.exports = mongoose.model('game', gameModel);

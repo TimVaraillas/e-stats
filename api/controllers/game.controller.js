@@ -1,7 +1,7 @@
 const Game = require("../models/game.model.js");
 
 exports.getAll = (req, res) => {
-  Game.find({})
+  Game.find()
     .then(data => {
       res.send(data);
     })

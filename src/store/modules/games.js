@@ -12,7 +12,6 @@ export default {
     },
     async addGame({ commit }, game) {
       this.$axios.post('/games', game).then((response) => {
-        console.log(response.data);
         commit('addGame', response.data);
       });
     },
