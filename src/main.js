@@ -1,7 +1,6 @@
 import { createApp } from 'vue';
 
 import axios from 'axios';
-import VueAxios from 'vue-axios';
 
 import 'normalize.css/normalize.css';
 
@@ -27,8 +26,11 @@ dom.watch();
 
 const app = createApp(App);
 
+axios.defaults.baseURL = 'http://localhost:3000';
+app.config.globalProperties.$axios = axios;
+store.$axios = axios;
+
 app.use(store);
 app.use(router);
-app.use(VueAxios, axios);
 app.use(ElementPlus, { locale: fr });
 app.mount('#app');

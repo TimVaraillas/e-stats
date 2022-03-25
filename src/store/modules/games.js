@@ -6,16 +6,15 @@ export default {
   getters: {},
   actions: {
     async getAllGames({ commit }) {
-      const games = [
-        { name: 'Match 1' },
-        { name: 'Match 2' },
-        { name: 'Match 3' },
-        { name: 'Match 4' },
-      ];
-      commit('setGames', games);
+      this.$axios.get('/games').then((response) => {
+        commit('setGames', response.data);
+      });
     },
     async addGame({ commit }, game) {
-      commit('addGame', game);
+      this.$axios.post('/games', game).then((response) => {
+        console.log(response.data);
+        commit('addGame', response.data);
+      });
     },
   },
   mutations: {
