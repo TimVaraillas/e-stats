@@ -44,3 +44,18 @@ exports.post = (req, res) => {
     });
 };
 
+exports.deleteById = (req, res) => {
+  
+  Game.deleteOne({ _id: req.params.id })
+    .then(() => {
+      res.send({deleted: req.params.id });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the game."
+      });
+    });
+};
+
