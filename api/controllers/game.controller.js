@@ -29,20 +29,14 @@ exports.getById = (req, res) => {
 };
 
 exports.post = (req, res) => {
-  if (!req.body.name) {
-    res.status(400).send({ message: "Name can not be empty!" });
-    return;
-  }
-
-  const game = new Game({
-    name: req.body.name,
-  });
+  const game = new Game(req.body);
 
   game.save()
     .then(data => {
       res.send(data);
     })
     .catch(err => {
+      console.log(err);
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the game."

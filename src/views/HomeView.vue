@@ -19,7 +19,7 @@ export default {
       games: 'all',
     }),
   },
-  mounted() {
+  created() {
     this.getAllGames();
   },
   methods: {

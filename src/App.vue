@@ -27,9 +27,7 @@
       </el-header>
 
       <el-main>
-        <el-scrollbar>
-          <router-view />
-        </el-scrollbar>
+        <router-view />
       </el-main>
 
       <el-footer>

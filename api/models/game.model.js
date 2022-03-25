@@ -2,7 +2,28 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let gameModel = new Schema({
-  name: String
+  place: {
+    type: String,
+    required: true
+  },
+  datetime: {
+    type: Date,
+    required: true
+  },
+  localeTeam: {
+    name: {
+      type: String,
+      required: true
+    },
+    color: String,
+  },
+  awayTeam: {
+    name: {
+      type: String,
+      required: true
+    },
+    color: String,
+  },
 }, { versionKey: false });
 
 gameModel.set('toJSON', {
