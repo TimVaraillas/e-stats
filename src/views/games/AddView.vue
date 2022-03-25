@@ -15,7 +15,7 @@
             <el-date-picker
               v-model="game.datetime"
               type="datetime"
-              format="DD/MM/YYYY hh:mm:ss"
+              format="DD/MM/YYYY hh:mm"
               placeholder=""/>
           </el-form-item>
         </el-col>
