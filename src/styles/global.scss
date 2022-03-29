@@ -1,1 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+.n-button {
+  .n-button__icon {
+    .n-icon-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  svg{
+    font-size: 12px;
+  }
+}
