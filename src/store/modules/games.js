@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _groupBy from 'lodash/groupBy';
 
 moment.locale('fr');
 
@@ -16,6 +17,9 @@ export default {
           datetime: dtStr[0].toUpperCase() + dtStr.slice(1),
         };
       });
+    },
+    allGroupByDate(state) {
+      return _groupBy(state.all, (game) => moment(game.datetime).format('YYYY-MM-DD'));
     },
   },
   actions: {
