@@ -5,17 +5,22 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Run back-end Express.js api for development
 ```
-npm run serve
+npm run serve-api
 ```
 
-### Compiles and minifies for production
+### Compiles and hot-reloads front-end Vue app for development
+```
+npm run serve-app
+```
+
+### Compiles and minifies Vue app for production
 ```
 npm run build
 ```
 
-### Lints and fixes files
+### Lints and fixes Vue app files
 ```
 npm run lint
 ```
