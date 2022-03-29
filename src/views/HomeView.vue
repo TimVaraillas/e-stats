@@ -1,50 +1,140 @@
 <template>
-  <div>
-    <h1>Mes matchs</h1>
-    <div class="games">
-      <el-card class="card" v-for="(game, index) of games" :key="index">
-        <template #header>
-          <div class="card-header">
-            <span>{{ game.datetime }}</span>
-            <span>{{ game.place }}</span>
-            <div class="card-actions">
-              <el-tooltip content="Modifier" placement="top">
-                <el-button size="small" type="primary" circle>
-                  <i class="fas fa-pencil"></i>
-                </el-button>
-              </el-tooltip>
-              <el-tooltip effect="dark" content="Supprimer" placement="top">
-                <el-button size="small" type="danger" circle @click="deleteGame(game.id)">
-                  <i class="fas fa-trash"></i>
-                </el-button>
-              </el-tooltip>
+  <div class="games">
+    <n-layout-header bordered>
+      <div class="title">
+        <span>{{ $route.name }}</span>
+      </div>
+      <div class="actions">
+        <n-button ghost type="primary" size="small" @click="toogleDisplayDrawer()">
+          <i class="fas fa-plus"></i>&nbsp;
+          <span>Nouveau match</span>
+        </n-button>
+      </div>
+    </n-layout-header>
+    <n-layout-content>
+      <div
+        v-for="date of Object.keys(gamesGroupByDate).sort((a, b) => new Date(b) - new Date(a))"
+        :key="date">
+        <h3 class="date">{{ moment(date).format("dddd LL") }}</h3>
+        <n-space vertical>
+          <n-card
+            size="small"
+            v-for="(game, index) of gamesGroupByDate[date]"
+            :key="index"
+            :segmented="{ content: true }">
+            <template #header>
+              {{ game.datetime }} - <em>{{ game.place }}</em>
+            </template>
+            <template #header-extra>
+              <n-space>
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <n-button ghost type="primary" size="small" circle>
+                      <i class="fas fa-pencil"></i>
+                    </n-button>
+                  </template>
+                  Modifier
+                </n-tooltip>
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <n-popconfirm positive-text="Oui" negative-text="Non">
+                      <template #trigger>
+                        <n-button
+                          ghost
+                          type="error"
+                          size="small"
+                          circle
+                          @click="deleteGame(game.id)">
+                          <i class="fas fa-trash"></i>
+                        </n-button>
+                      </template>
+                      Êtes-vous sûr de vouloir supprimer ce match ?
+                    </n-popconfirm>
+                  </template>
+                  Supprimer
+                </n-tooltip>
+              </n-space>
+            </template>
+
+            <div class="content">
+              <div class="team">
+                <n-avatar :style="{ backgroundColor: game.localeTeam.color }" />
+                <h3>{{ game.localeTeam.name }}</h3>
+              </div>
+              <div>contre</div>
+              <div class="team">
+                <n-avatar :style="{ backgroundColor: game.awayTeam.color }" />
+                <h3>{{ game.awayTeam.name }}</h3>
+              </div>
             </div>
-          </div>
+          </n-card>
+        </n-space>
+      </div>
+    </n-layout-content>
+    <n-drawer v-model:show="drawer" width="50%">
+      <n-drawer-content title="Nouveau match" closable>
+        <edit-game ref="editGame"></edit-game>
+        <template #footer>
+          <n-space>
+            <n-button ghost type="error" @click="toogleDisplayDrawer()">
+              Annuler
+              </n-button>
+            <n-button type="primary" @click="$refs.editGame.addGame($refs.editGame.game)">
+              Créer
+            </n-button>
+          </n-space>
         </template>
-        <div class="card-content">
-          <div class="team">
-            <div :style="{ backgroundColor: game.localeTeam.color }" class="team-color"></div>
-            <span>{{ game.localeTeam.name }}</span>
-          </div>
-          <div>contre</div>
-          <div class="team">
-            <div :style="{ backgroundColor: game.awayTeam.color }" class="team-color"></div>
-            <span>{{ game.awayTeam.name }}</span>
-          </div>
-        </div>
-      </el-card>
-    </div>
+      </n-drawer-content>
+  </n-drawer>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import moment from 'moment';
+import {
+  NLayoutHeader,
+  NLayoutContent,
+  NSpace,
+  NButton,
+  NCard,
+  NTooltip,
+  NPopconfirm,
+  NAvatar,
+  NDrawer,
+  NDrawerContent,
+} from 'naive-ui';
+
+import EditGame from '@/components/games/EditGame.vue';
 
 export default {
   name: 'HomeView',
+  components: {
+    EditGame,
+    NLayoutHeader,
+    NLayoutContent,
+    NSpace,
+    NButton,
+    NCard,
+    NTooltip,
+    NPopconfirm,
+    NAvatar,
+    NDrawer,
+    NDrawerContent,
+  },
+  setup() {
+    return {
+      moment,
+    };
+  },
+  data() {
+    return {
+      drawer: false,
+    };
+  },
   computed: {
     ...mapGetters('games', {
-      games: 'all',
+      gamesGroupByDate: 'allGroupByDate',
     }),
   },
   created() {
@@ -55,6 +145,13 @@ export default {
       'getAllGames',
       'deleteGame',
     ]),
+    toogleDisplayDrawer() {
+      this.drawer = !this.drawer;
+      console.log(this.$refs.editGame);
+    },
+    handleClose() {
+      console.log('plop');
+    },
   },
 };
 </script>
@@ -63,38 +160,43 @@ export default {
 @import "../styles/variables.scss";
 
 .games {
-  .card {
-    margin: 10px 0;
-    background-color: $color-tertiary;
-    color: $color-white;
-    border: none;
+  .n-layout-header {
+    height: 50px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
 
-    ::v-deep .el-card__header {
-      border-bottom: 2px solid $color-secondary;
+    .title {
+      flex: 1;
+      font-weight: 700;
+    }
+  }
+
+  .n-layout-content {
+    padding: 10px 15px;
+
+    .date {
+      display: flex;
+      justify-content: center;
+      text-transform: capitalize;
     }
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .card-content {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-
-      .team {
+    .n-card {
+      .content {
         display: flex;
+        justify-content: space-around;
         align-items: center;
-        margin: 5px 0;
+        padding: 20px 0;
 
-        .team-color {
-          display: inline-block;
-          width: 18px;
-          height: 18px;
-          margin-right: 10px;
-          border-radius: 3px;
+        .team {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          h3 {
+            margin: 0 0 0 10px;
+          }
         }
       }
     }
