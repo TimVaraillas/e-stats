@@ -1,112 +1,89 @@
 <template>
-  <el-container class="layout-container">
-    <el-aside>
-      <el-scrollbar>
-        <el-menu default-active="1">
-          <router-link to="/">
-            <el-menu-item index="1">
-            <i class="fas fa-home"></i>
-            <span>Accueil</span>
-            </el-menu-item>
-          </router-link>
-          <router-link to="/games/add">
-            <el-menu-item index="2">
-              <i class="fas fa-plus"></i>
-              <span>Nouveau match</span>
-            </el-menu-item>
-          </router-link>
-        </el-menu>
-      </el-scrollbar>
-    </el-aside>
-
-    <el-container>
-      <el-header>
-        <div class="toolbar">
-          <span>Tim</span>
-        </div>
-      </el-header>
-
-      <el-main>
-        <router-view />
-      </el-main>
-
-      <el-footer>
+  <n-config-provider :theme="darkTheme" :locale="frFR" :date-locale="dateFrFR">
+    <n-layout style="height: 100vh">
+      <n-layout-header style="height: 64px; padding: 24px" bordered>
+        <b>E-stats</b>
+      </n-layout-header>
+      <n-layout position="absolute" style="top: 64px; bottom: 64px" has-sider>
+        <n-layout-sider :native-scrollbar="false" bordered>
+          <n-menu ref="menu" :options="options" v-model="selectedKey"/>
+        </n-layout-sider>
+        <n-layout :native-scrollbar="false">
+          <router-view />
+        </n-layout>
+      </n-layout>
+      <n-layout-footer
+        position="absolute"
+        style="height: 64px; padding: 24px"
+        bordered
+      >
         <span>© {{ new Date().getFullYear() }}, <b>E-Stats</b></span>
-      </el-footer>
-    </el-container>
-  </el-container>
+      </n-layout-footer>
+    </n-layout>
+
+  </n-config-provider>
 </template>
 
 <script>
+import {
+  darkTheme,
+  frFR,
+  dateFrFR,
+  NConfigProvider,
+  NLayout,
+  NLayoutHeader,
+  NLayoutFooter,
+  NLayoutSider,
+  NMenu,
+} from 'naive-ui';
+import { h } from 'vue';
+import { RouterLink } from 'vue-router';
+
+function renderIcon(icon) {
+  return () => h('i', { class: `menu-icon fas ${icon}` });
+}
+
+const menuOptions = [
+  {
+    label: () => h(RouterLink, {
+      to: {
+        name: 'Mes matchs',
+      },
+    }, { default: () => 'Mes matchs' }),
+    key: 'games',
+    icon: renderIcon('fa-basketball'),
+  },
+];
 
 export default {
   name: 'App',
+  components: {
+    NConfigProvider,
+    NLayout,
+    NLayoutHeader,
+    NLayoutFooter,
+    NLayoutSider,
+    NMenu,
+  },
+  setup() {
+    return {
+      darkTheme,
+      frFR,
+      dateFrFR,
+    };
+  },
+  data() {
+    return {
+      options: menuOptions,
+      selectedKey: 'Mes matchs',
+    };
+  },
+
 };
 </script>
 
-<style scoped lang="scss">
-  @import "./styles/variables.scss";
-
-  .layout-container {
-    font-family: 'Roboto Slab', serif;
-    background-color: $color-secondary;
-    color: $color-white;
-
-    .el-aside {
-      width: 200px;
-      height: 100vh;
-      color: var(--el-text-color-primary);
-      background-color: $color-primary;
-
-      .el-scrollbar {
-        background-color: transparent;
-
-        .el-menu {
-          border-right: none;
-          background-color: transparent;
-
-          a {
-            color: $color-black;
-            text-decoration: none;
-
-            span {
-              margin: 0 5px;
-            }
-          }
-          .el-menu-item {
-            &:hover {
-              background-color: darken($color-primary, 5%);
-            }
-            &.is-active {
-              background-color: darken($color-primary, 5%);
-              color: $color-white;
-            }
-          }
-        }
-      }
-    }
-
-    .el-header {
-      height: 60px;
-      position: relative;
-      background-color: $color-tertiary;
-      color: $color-white;
-
-      .toolbar {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-      }
-    }
-  }
-
-  .el-footer {
-    height: 40px;
-    background-color: $color-tertiary;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
+<style lang="scss" scoped>
+::v-deep .menu-icon {
+  font-size: 13px;
+}
 </style>
