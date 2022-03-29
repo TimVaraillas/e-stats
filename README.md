@@ -1,12 +1,19 @@
 # e-stats
 
-## Project setup
+## Vue app project setup
 ```
+npm install
+```
+
+## Express.js api project setup
+```
+cd ./api
 npm install
 ```
 
 ### Run back-end Express.js api for development
 ```
+cd ..
 npm run serve-api
 ```
 
