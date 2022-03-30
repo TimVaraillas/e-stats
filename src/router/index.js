@@ -4,7 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'Mes matchs',
-    component: () => import('../views/HomeView.vue'),
+    component: () => import('../views/games/GamesListView.vue'),
   },
 ];
 

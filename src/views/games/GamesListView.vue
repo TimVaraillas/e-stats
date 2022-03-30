@@ -13,23 +13,29 @@
     </n-layout-header>
     <n-layout-content>
       <div
-        v-for="date of Object.keys(gamesGroupByDate).sort((a, b) => new Date(b) - new Date(a))"
+        v-for="date of Object.keys(getGamesGroupByDate).sort((a, b) => new Date(b) - new Date(a))"
         :key="date">
         <h3 class="date">{{ moment(date).format("dddd LL") }}</h3>
         <n-space vertical>
           <n-card
             size="small"
-            v-for="(game, index) of gamesGroupByDate[date]"
+            v-for="(game, index) of getGamesGroupByDate[date]"
             :key="index"
             :segmented="{ content: true }">
             <template #header>
-              {{ game.datetime }} - <em>{{ game.place }}</em>
+              <span class="time">{{ game.time }}&nbsp;</span>
+              <span class="place"> - {{ game.place }}</span>
             </template>
             <template #header-extra>
               <n-space>
                 <n-tooltip trigger="hover">
                   <template #trigger>
-                    <n-button ghost type="primary" size="small" circle>
+                    <n-button
+                      ghost
+                      type="primary"
+                      size="small"
+                      circle
+                      @click="openEditDrawer(game.id)">
                       <i class="fas fa-pencil"></i>
                     </n-button>
                   </template>
@@ -37,14 +43,12 @@
                 </n-tooltip>
                 <n-tooltip trigger="hover">
                   <template #trigger>
-                    <n-popconfirm positive-text="Oui" negative-text="Non">
+                    <n-popconfirm
+                      positive-text="Oui"
+                      negative-text="Non"
+                      @positive-click="onDeleteGame(game.id)">
                       <template #trigger>
-                        <n-button
-                          ghost
-                          type="error"
-                          size="small"
-                          circle
-                          @click="deleteGame(game.id)">
+                        <n-button ghost type="error" size="small" circle>
                           <i class="fas fa-trash"></i>
                         </n-button>
                       </template>
@@ -73,14 +77,17 @@
     </n-layout-content>
     <n-drawer v-model:show="drawer" width="50%">
       <n-drawer-content title="Nouveau match" closable>
-        <edit-game ref="editGame"></edit-game>
+        <edit-game ref="editGame" :edit-id="editId"></edit-game>
         <template #footer>
           <n-space>
             <n-button ghost type="error" @click="toogleDisplayDrawer()">
               Annuler
               </n-button>
-            <n-button type="primary" @click="$refs.editGame.addGame($refs.editGame.game)">
+            <n-button v-if="!editId" type="primary" @click="onAddGame">
               Créer
+            </n-button>
+            <n-button v-if="editId" type="primary" @click="onEditGame">
+              Modifier
             </n-button>
           </n-space>
         </template>
@@ -103,6 +110,7 @@ import {
   NAvatar,
   NDrawer,
   NDrawerContent,
+  useMessage,
 } from 'naive-ui';
 
 import EditGame from '@/components/games/EditGame.vue';
@@ -129,13 +137,22 @@ export default {
   },
   data() {
     return {
+      editId: null,
       drawer: false,
+      toaster: useMessage(),
     };
   },
+  watch: {
+    drawer() {
+      if (!this.drawer) {
+        this.editId = null;
+      }
+    },
+  },
   computed: {
-    ...mapGetters('games', {
-      gamesGroupByDate: 'allGroupByDate',
-    }),
+    ...mapGetters('games', [
+      'getGamesGroupByDate',
+    ]),
   },
   created() {
     this.getAllGames();
@@ -145,19 +162,42 @@ export default {
       'getAllGames',
       'deleteGame',
     ]),
+
     toogleDisplayDrawer() {
       this.drawer = !this.drawer;
-      console.log(this.$refs.editGame);
     },
-    handleClose() {
-      console.log('plop');
+
+    openEditDrawer(id) {
+      this.editId = id;
+      this.drawer = true;
+    },
+
+    onAddGame() {
+      this.drawer = false;
+      this.$refs.editGame.addGame(this.$refs.editGame.game)
+        .then(() => this.toaster.success('Le match a bien été créé'))
+        .catch(() => this.toaster.error("Une erreur s'est produite. Le match n'a pas pu être créé"));
+    },
+
+    onEditGame() {
+      this.drawer = false;
+      this.$refs.editGame.updateGame(this.$refs.editGame.game)
+        .then(() => this.toaster.success('Le match a bien été modifié'))
+        .catch(() => this.toaster.error("Une erreur s'est produite. Le match n'a pas pu être modifié"));
+      this.editId = null;
+    },
+
+    onDeleteGame(gameId) {
+      this.deleteGame(gameId)
+        .then(() => this.toaster.success('Le match a bien été supprimé'))
+        .catch(() => this.toaster.error("Une erreur s'est produite. Le match n'a pas pu être supprimé"));
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/variables.scss";
+@import "../../styles/variables.scss";
 
 .games {
   .n-layout-header {
@@ -182,6 +222,10 @@ export default {
     }
 
     .n-card {
+      .time {
+        color: $color-primary;
+      }
+
       .content {
         display: flex;
         justify-content: space-around;
