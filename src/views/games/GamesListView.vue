@@ -30,9 +30,23 @@
               <n-space>
                 <n-tooltip trigger="hover">
                   <template #trigger>
+                    <router-link :to="`/game/${game.id}/players`">
+                      <n-button
+                        ghost
+                        type="primary"
+                        size="small"
+                        circle>
+                        <i class="fas fa-play"></i>
+                      </n-button>
+                    </router-link>
+                  </template>
+                  Démarrer
+                </n-tooltip>
+                <n-tooltip trigger="hover">
+                  <template #trigger>
                     <n-button
                       ghost
-                      type="primary"
+                      type="info"
                       size="small"
                       circle
                       @click="openEditDrawer(game.id)">
@@ -76,7 +90,7 @@
       </div>
     </n-layout-content>
     <n-drawer v-model:show="drawer" width="50%">
-      <n-drawer-content title="Nouveau match" closable>
+      <n-drawer-content :title="editId ? 'Modifier un match' : 'Nouveau match'" closable>
         <edit-game ref="editGame" :edit-id="editId"></edit-game>
         <template #footer>
           <n-space>
