@@ -9,17 +9,17 @@ export default {
     all: [],
   }),
   getters: {
-    all(state) {
-      return state.all.map((game) => {
-        const dtStr = moment(game.datetime).format('LLLL');
-        return {
-          ...game,
-          datetime: dtStr[0].toUpperCase() + dtStr.slice(1),
-        };
-      });
+    getGameById(state) {
+      return (id) => state.all
+        .map((game) => ({ ...game, datetime: moment(game.datetime).valueOf() }))
+        .find((game) => game.id === id);
     },
-    allGroupByDate(state) {
-      return _groupBy(state.all, (game) => moment(game.datetime).format('YYYY-MM-DD'));
+    getGamesGroupByDate(state) {
+      const all = state.all.map((game) => ({
+        ...game,
+        time: moment(game.datetime).format('LT'),
+      }));
+      return _groupBy(all, (game) => moment(game.datetime).format('YYYY-MM-DD'));
     },
   },
   actions: {
@@ -31,6 +31,11 @@ export default {
     async addGame({ commit }, game) {
       this.$axios.post('/games', game).then((response) => {
         commit('addGame', response.data);
+      });
+    },
+    async updateGame({ commit }, game) {
+      this.$axios.put(`/games/${game.id}`, game).then((response) => {
+        commit('updateGame', response.data);
       });
     },
     async deleteGame({ commit }, gameId) {
@@ -45,11 +50,15 @@ export default {
     setGames(state, games) {
       state.all = games;
     },
-    addGame(state, game) {
-      state.all.push(game);
+    addGame(state, addedGame) {
+      state.all.push(addedGame);
     },
-    deleteGame(state, gameId) {
-      const index = state.all.findIndex((o) => o.id === gameId);
+    updateGame(state, updatedGame) {
+      const index = state.all.findIndex((o) => o.id === updatedGame.id);
+      if (index !== -1) state.all[index] = updatedGame;
+    },
+    deleteGame(state, deletedGameId) {
+      const index = state.all.findIndex((o) => o.id === deletedGameId);
       if (index !== -1) state.all.splice(index, 1);
     },
   },
