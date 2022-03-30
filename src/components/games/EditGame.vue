@@ -1,6 +1,5 @@
 <template>
   <div class="edit-game">
-
     <n-form :model="game">
       <n-grid span="24" x-gap="20">
 
@@ -38,8 +37,9 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
+import _cloneDeep from 'lodash/cloneDeep';
 import {
   NGrid,
   NForm,
@@ -59,6 +59,9 @@ export default {
     NDatePicker,
     NColorPicker,
   },
+  props: {
+    editId: String,
+  },
   data() {
     return {
       game: {
@@ -75,17 +78,27 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapGetters('games', [
+      'getGameById',
+    ]),
+  },
+  mounted() {
+    if (this.editId) {
+      this.game = _cloneDeep(this.getGameById(this.editId));
+    }
+  },
   methods: {
     ...mapActions('games', [
       'addGame',
+      'updateGame',
     ]),
 
     getDefaultDatetime() {
       let start = moment();
       start = start.endOf('hour');
       start = start.set({ minute: 0, second: 0, millisecond: 0 });
-      console.log(start.format('LLLL'));
-      return start.toDate();
+      return start.valueOf();
     },
   },
 };
