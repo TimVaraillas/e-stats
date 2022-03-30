@@ -1,26 +1,34 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-let gameModel = new Schema({
+const gameModel = new mongoose.Schema({
   place: {
     type: String,
-    required: true
+    required: true,
   },
   datetime: {
     type: Date,
-    required: true
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+  sex: {
+    type: String,
+    enum: ['m', 'f'],
+    required: true,
   },
   localeTeam: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     color: String,
   },
   awayTeam: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     color: String,
   },
@@ -28,9 +36,9 @@ let gameModel = new Schema({
 
 gameModel.set('toJSON', {
   virtuals: true,
-  transform: function (doc, ret) {   
-    delete ret._id; 
-  }
+  transform: (doc, ret) => {
+    delete ret._id;
+  },
 });
 
 module.exports = mongoose.model('game', gameModel);

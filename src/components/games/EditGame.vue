@@ -22,7 +22,7 @@
         </n-form-item-gi>
 
         <n-form-item-gi span="16" label="Catégorie" path="category">
-          <n-select filterable :options="categoryOptions"></n-select>
+          <n-select v-model:value="game.category" filterable :options="categoryOptions"></n-select>
         </n-form-item-gi>
 
         <n-form-item-gi span="8" label="Sexe" path="sex">
@@ -150,6 +150,8 @@ export default {
       game: {
         place: '',
         datetime: this.getDefaultDatetime(),
+        category: 'adult',
+        sex: 'm',
         localeTeam: {
           name: '',
           color: '#FFCC33',
