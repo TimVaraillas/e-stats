@@ -40,6 +40,7 @@ import {
 } from 'naive-ui';
 import { h } from 'vue';
 import { RouterLink } from 'vue-router';
+import { mapActions } from 'vuex';
 
 function renderIcon(icon) {
   return () => h('i', { class: `menu-icon fas ${icon}` });
@@ -81,7 +82,14 @@ export default {
       selectedKey: 'Mes matchs',
     };
   },
-
+  created() {
+    this.getAllGames();
+  },
+  methods: {
+    ...mapActions('games', [
+      'getAllGames',
+    ]),
+  },
 };
 </script>
 
