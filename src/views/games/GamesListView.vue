@@ -1,17 +1,21 @@
 <template>
   <div class="games">
-    <n-layout-header bordered>
-      <div class="title">
-        <span>{{ $route.name }}</span>
-      </div>
-      <div class="actions">
-        <n-button ghost type="primary" size="small" @click="toogleDisplayDrawer()">
-          <i class="fas fa-plus"></i>&nbsp;
-          <span>Nouveau match</span>
-        </n-button>
-      </div>
+    <n-layout-header class="page-header" bordered>
+      <n-page-header bordered>
+        <template #title>
+          {{ $route.name }}
+        </template>
+        <template #extra>
+          <n-space>
+            <n-button ghost type="primary" size="small" @click="toogleDisplayDrawer()">
+              <i class="fas fa-plus"></i>&nbsp;
+              <span>Nouveau match</span>
+            </n-button>
+          </n-space>
+        </template>
+      </n-page-header>
     </n-layout-header>
-    <n-layout-content>
+    <n-layout-content class="page-content">
       <div
         v-for="date of Object.keys(getGamesGroupByDate).sort((a, b) => new Date(b) - new Date(a))"
         :key="date">
@@ -116,6 +120,7 @@ import moment from 'moment';
 import {
   NLayoutHeader,
   NLayoutContent,
+  NPageHeader,
   NSpace,
   NButton,
   NCard,
@@ -135,6 +140,7 @@ export default {
     EditGame,
     NLayoutHeader,
     NLayoutContent,
+    NPageHeader,
     NSpace,
     NButton,
     NCard,
@@ -168,12 +174,8 @@ export default {
       'getGamesGroupByDate',
     ]),
   },
-  created() {
-    this.getAllGames();
-  },
   methods: {
     ...mapActions('games', [
-      'getAllGames',
       'deleteGame',
     ]),
 
@@ -214,21 +216,8 @@ export default {
 @import "../../styles/variables.scss";
 
 .games {
-  .n-layout-header {
-    height: 50px;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
 
-    .title {
-      flex: 1;
-      font-weight: 700;
-    }
-  }
-
-  .n-layout-content {
-    padding: 10px 15px;
-
+  .page-content {
     .date {
       display: flex;
       justify-content: center;

@@ -12,3 +12,18 @@
     font-size: 12px;
   }
 }
+
+.page-header {
+  height: 50px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+
+  .n-page-header-wrapper {
+    flex: 1;
+  }
+}
+
+.page-content {
+  padding: 10px 15px;
+}
