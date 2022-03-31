@@ -155,10 +155,12 @@ export default {
         localeTeam: {
           name: '',
           color: '#FFCC33',
+          players: [],
         },
         awayTeam: {
           name: '',
           color: '#FF6680',
+          players: [],
         },
       },
     };

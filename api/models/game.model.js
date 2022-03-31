@@ -24,6 +24,7 @@ const gameModel = new mongoose.Schema({
       required: true,
     },
     color: String,
+    players: [{ number: Number, name: String }],
   },
   awayTeam: {
     name: {
@@ -31,6 +32,7 @@ const gameModel = new mongoose.Schema({
       required: true,
     },
     color: String,
+    players: [{ number: Number, name: String }],
   },
 }, { versionKey: false });
 
