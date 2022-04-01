@@ -153,13 +153,13 @@ export default {
   setup() {
     return {
       moment,
+      toaster: useMessage(),
     };
   },
   data() {
     return {
       editId: null,
       drawer: false,
-      toaster: useMessage(),
     };
   },
   watch: {
