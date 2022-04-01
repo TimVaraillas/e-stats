@@ -1,5 +1,5 @@
 const Game = require("../models/game.model.js");
-const _omit = require("lodash/omit")
+const _omit = require("lodash/omit");
 
 exports.getAll = (req, res) => {
   Game.find()
@@ -75,3 +75,20 @@ exports.deleteById = (req, res) => {
     });
 };
 
+exports.addPlayer = async (req, res) => {
+  console.log(req.params, req.body);
+  let game = await Game.findById(req.params.id);
+  game[req.params.team].players.push(req.body.player);
+  Game
+    .findByIdAndUpdate(req.params.id, { $set: { ..._omit(game, ["id"]) } }, { returnDocument: "after" })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while updating the game."
+      });
+    });
+};

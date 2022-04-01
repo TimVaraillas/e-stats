@@ -1,5 +1,6 @@
 import moment from 'moment';
 import _groupBy from 'lodash/groupBy';
+import _cloneDeep from 'lodash/cloneDeep';
 
 moment.locale('fr');
 
@@ -21,6 +22,13 @@ export default {
         time: moment(game.datetime).format('LT'),
       }));
       return _groupBy(all, (game) => moment(game.datetime).format('YYYY-MM-DD'));
+    },
+
+    getPlayers(state) {
+      return (id, team) => {
+        const game = _cloneDeep(state.all.find((g) => g.id === id));
+        return game[team].players.sort((a, b) => a.number - b.number);
+      };
     },
   },
   actions: {
@@ -47,6 +55,12 @@ export default {
         if (response.data.deleted) {
           commit('deleteGame', gameId);
         }
+      });
+    },
+
+    async addPlayer({ commit }, { gameId, team, player }) {
+      this.$axios.put(`/games/${gameId}/players/${team}`, { player }).then((response) => {
+        commit('updateGame', response.data);
       });
     },
   },
