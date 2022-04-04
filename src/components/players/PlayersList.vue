@@ -3,15 +3,13 @@
      <n-data-table
       :columns="columns"
       :data="getPlayers(gameId, team)">
-        <!-- <template #empty> -->
-          <!-- <n-empty
-            v-if="!getGameById(gameId)[team]?.players[0]"
-            description="Aucun joueur">
+        <template #empty>
+          <n-empty description="Aucun joueur">
             <template #icon>
               <i class="fas fa-basketball"></i>
             </template>
-          </n-empty> -->
-        <!-- </template> -->
+          </n-empty>
+        </template>
       </n-data-table>
   </div>
 </template>
@@ -21,18 +19,16 @@ import { h } from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import moment from 'moment';
 import {
-  // NEmpty,
+  NEmpty,
   NButton,
   NDataTable,
   useMessage,
 } from 'naive-ui';
 
-// const createColumns = ({ removePlayer }) =>
-
 export default {
   name: 'PlayersList',
   components: {
-    // NEmpty,
+    NEmpty,
     NDataTable,
   },
   props: {
@@ -75,7 +71,7 @@ export default {
             return h(
               NButton,
               {
-                ghost: true,
+                secondary: true,
                 circle: true,
                 type: 'error',
                 size: 'small',
