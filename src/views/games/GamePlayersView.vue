@@ -14,7 +14,6 @@
           v-for="team of ['localeTeam', 'awayTeam']"
           :key="getGameById($route.params.id)[team]?.name">
           <n-card :title="getGameById($route.params.id)[team]?.name">
-            <n-divider>Joueurs</n-divider>
             <player-add :gameId="$route.params.id" :team="team"></player-add>
             <players-list :gameId="$route.params.id" :team="team"></players-list>
           </n-card>
@@ -34,7 +33,6 @@ import {
   NGrid,
   NGi,
   NCard,
-  NDivider,
 } from 'naive-ui';
 
 import PlayerAdd from '@/components/players/PlayerAdd.vue';
@@ -49,7 +47,6 @@ export default {
     NGrid,
     NGi,
     NCard,
-    NDivider,
     PlayerAdd,
     PlayersList,
   },
