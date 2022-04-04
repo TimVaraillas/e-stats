@@ -18,51 +18,19 @@
 
 <script>
 import { h } from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import moment from 'moment';
 import {
   // NEmpty,
   NButton,
   NDataTable,
+  useMessage,
 } from 'naive-ui';
 
-const createColumns = ({ deletePlayer }) => [
-  {
-    title: 'N°',
-    key: 'number',
-    sorter: (a, b) => a.number - b.number,
-    width: 80,
-  },
-  {
-    title: 'Nom',
-    key: 'name',
-    sorter: (a, b) => {
-      if (a.name < b.name) return -1;
-      if (a.name > b.name) return 1;
-      return 0;
-    },
-  },
-  {
-    align: 'right',
-    width: 80,
-    render(row) {
-      return h(
-        NButton,
-        {
-          ghost: true,
-          circle: true,
-          type: 'error',
-          size: 'small',
-          onClick: () => deletePlayer(row),
-        },
-        { default: () => h('i', { class: 'fas fa-trash' }) },
-      );
-    },
-  },
-];
+// const createColumns = ({ removePlayer }) =>
 
 export default {
-  name: 'GamePlayersView',
+  name: 'PlayersList',
   components: {
     // NEmpty,
     NDataTable,
@@ -74,11 +42,7 @@ export default {
   setup() {
     return {
       moment,
-      columns: createColumns({
-        deletePlayer(row) {
-          this.deletePlayer(row);
-        },
-      }),
+      toaster: useMessage(),
     };
   },
   computed: {
@@ -86,10 +50,56 @@ export default {
       'getGameById',
       'getPlayers',
     ]),
+    columns() {
+      const parent = this;
+      return [
+        {
+          title: 'N°',
+          key: 'number',
+          sorter: (a, b) => a.number - b.number,
+          width: 80,
+        },
+        {
+          title: 'Nom',
+          key: 'name',
+          sorter: (a, b) => {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          },
+        },
+        {
+          align: 'right',
+          width: 80,
+          render(row) {
+            return h(
+              NButton,
+              {
+                ghost: true,
+                circle: true,
+                type: 'error',
+                size: 'small',
+                onClick: () => parent.remove(row),
+              },
+              { default: () => h('i', { class: 'fas fa-trash' }) },
+            );
+          },
+        },
+      ];
+    },
   },
   methods: {
-    deletePlayer(player) {
-      console.log('delete', player);
+    ...mapActions('games', [
+      'removePlayer',
+    ]),
+    remove(player) {
+      this.removePlayer({ gameId: this.gameId, team: this.team, number: player.number })
+        .then(() => {
+          this.toaster.success('Le joueur a bien été supprimé');
+        })
+        .catch(() => {
+          this.toaster.error("Le joueur n'a pas pu être supprimé");
+        });
     },
   },
 };
