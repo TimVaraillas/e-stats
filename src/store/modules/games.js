@@ -59,7 +59,13 @@ export default {
     },
 
     async addPlayer({ commit }, { gameId, team, player }) {
-      this.$axios.put(`/games/${gameId}/players/${team}`, { player }).then((response) => {
+      this.$axios.put(`/games/${gameId}/players/${team}/add`, { player }).then((response) => {
+        commit('updateGame', response.data);
+      });
+    },
+
+    async removePlayer({ commit }, { gameId, team, number }) {
+      this.$axios.put(`/games/${gameId}/players/${team}/remove`, { number }).then((response) => {
         commit('updateGame', response.data);
       });
     },

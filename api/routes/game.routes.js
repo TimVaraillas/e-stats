@@ -8,6 +8,7 @@ router.post("/", gameController.post);
 router.put("/:id", gameController.updateById);
 router.delete("/:id", gameController.deleteById);
 
-router.put("/:id/players/:team", gameController.addPlayer);
+router.put("/:id/players/:team/add", gameController.addPlayer);
+router.put("/:id/players/:team/remove", gameController.removePlayer);
 
 module.exports = router;

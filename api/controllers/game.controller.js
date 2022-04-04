@@ -76,7 +76,6 @@ exports.deleteById = (req, res) => {
 };
 
 exports.addPlayer = async (req, res) => {
-  console.log(req.params, req.body);
   let game = await Game.findById(req.params.id);
   game[req.params.team].players.push(req.body.player);
   Game
@@ -91,4 +90,28 @@ exports.addPlayer = async (req, res) => {
           err.message || "Some error occurred while updating the game."
       });
     });
+};
+
+exports.removePlayer = async (req, res) => {
+  let game = await Game.findById(req.params.id);
+  const index = game[req.params.team].players.findIndex((player) => player.number === req.body.number);
+  if (index > -1) {
+    game[req.params.team].players.splice(index, 1); 
+    Game
+      .findByIdAndUpdate(req.params.id, { $set: { ..._omit(game, ["id"]) } }, { returnDocument: "after" })
+      .then((data) => {
+        res.send(data);
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while updating the game."
+        });
+      });
+  } else {
+    res.status(404).send({
+      message: "This player number does not exist in the team."
+    });
+  }
 };
